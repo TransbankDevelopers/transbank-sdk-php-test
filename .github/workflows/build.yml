@@ -27,7 +27,7 @@ jobs:
           ini-values: post_max_size=256M, max_execution_time=180
           coverage: xdebug
           tools: php-cs-fixer, phpunit
-
+      - uses: actions/checkout@v3
       - name: SonarCloud Scan
         uses: sonarsource/sonarcloud-github-action@master
         env:
