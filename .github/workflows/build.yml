@@ -19,25 +19,14 @@ jobs:
   SonarCloud:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v3
-
-      - name: Install composer and dependencies
-        uses: php-actions/composer@v6
-
-      - name: PHPUnit Tests
-        uses: php-actions/phpunit@v3
-        env:
-          XDEBUG_MODE: coverage
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
         with:
-          bootstrap: vendor/autoload.php
-          configuration: phpunit.xml
-          php_extensions: xdebug
-          args: tests --coverage-clover ./coverage.xml
-
-      - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
+          php-version: '8.2'
+          extensions: mbstring, intl
+          ini-values: post_max_size=256M, max_execution_time=180
+          coverage: xdebug
+          tools: php-cs-fixer, phpunit
 
       - name: SonarCloud Scan
         uses: sonarsource/sonarcloud-github-action@master
@@ -45,7 +34,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         with:
-          projectBaseDir: my-custom-directory
           args: >
             -Dsonar.php.coverage.reportPaths=coverage.xml
             -Dsonar.verbose=true
